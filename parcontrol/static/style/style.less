@@ -1,0 +1,221 @@
+@import "../components/bootstrap/less/bootstrap";
+
+@body-bg: #333;
+@table-border-color: #444;
+@text-color: #999;
+
+@slider-spacing: 100px;
+
+body, html {
+  padding: 0;
+  margin: 0;
+}
+
+.pars-bar {
+  height: 48px;
+  background: #222;
+  border-bottom: 1px solid #444;
+
+  .par-led {
+    float: left;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    margin-top: 8px;
+    margin-left: 16px;
+    box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.5);
+    border: 1px solid transparent;
+    &.par-active {
+      border: 1px solid white;
+      box-shadow: 0 0 8px 0 rgba(255, 255, 255, 1);
+    }
+  }
+
+  .pars-label {
+    float: left;
+    height: 26px;
+    margin-right: 16px;
+    width: 60px;
+    color: white;
+    text-align: center;
+    line-height: 26px;
+    border-radius: 4px;
+    margin-top: 10px;
+    margin-left: 16px;
+  }
+
+  .pars-label-live {
+    background: #e00;
+  }
+  .pars-label-preview {
+    background: green;
+  }
+}
+
+div.spacer {
+  height: 16px;
+}
+
+div.panel-dmx {
+  background-color: #222;
+  border: 1px solid #444;
+  border-radius: 0;
+  box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.2);
+
+  .panel-heading {
+    border-bottom: 1px solid #444;
+    color: #999;
+    font-weight: bold;
+    background: #292929;
+  }
+
+  .panel-body {
+    position: relative;
+  }
+}
+
+input.vertical {
+  transform: rotate(270deg);
+  background: #000;
+  border-radius: 3px;
+  width: 280px;
+  position: absolute;
+  top: 149px;
+  .shifter(7, -100px, @slider-spacing);
+}
+
+.shifter(@counter, @offset, @increment) when (@counter > 0) {
+  &:nth-of-type(@{counter}) { //NOTE: 1.3.3 and under is just @index, not @{index}
+    left: ((@increment * (@counter) - @increment)+@offset);
+  }
+  .shifter((@counter - 1), @offset, @increment);
+}
+
+.shifter(0) {
+}
+
+div.slider-scale {
+  position: absolute;
+  top: 11px;
+  height: 280px;
+  width: 50px;
+  .shifter(7, 15px, @slider-spacing);
+}
+
+div.slider-scale:nth-of-type(1) {
+  background-image: url(../img/slider-red.png);
+}
+
+div.slider-scale:nth-of-type(2) {
+  background-image: url(../img/slider-green.png);
+}
+
+div.slider-scale:nth-of-type(3) {
+  background-image: url(../img/slider-blue.png);
+}
+
+div.slider-scale:nth-of-type(4) {
+  background-image: url(../img/slider-hue.png);
+}
+
+div.slider-scale:nth-of-type(5) {
+  background-image: url(../img/slider-sat.png);
+}
+
+div.slider-scale:nth-of-type(6) {
+  background-image: url(../img/slider-white.png);
+}
+
+div.slider-scale:nth-of-type(7) {
+  background-image: url(../img/slider-temp.png);
+}
+
+input[type=range] {
+  -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
+
+input[type=range]:focus {
+  outline: none; /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+}
+
+input[type=range]::-ms-track {
+  width: 100%;
+  cursor: pointer;
+  background: transparent; /* Hides the slider so custom styles can be added */
+  border-color: transparent;
+  color: transparent;
+}
+
+.panel-sliders {
+  height: 350px;
+
+  span {
+    position: absolute;
+    top: 300px;
+    font-weight: bold;
+    display: block;
+    width: @slider-spacing;
+    text-align: center;
+
+    .shifter(7, -10px, @slider-spacing);
+  }
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100px;
+  height: 3px;
+  background: #111;
+  border: none;
+  border-radius: 3px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background-image: url(../img/slider.png);
+  width: 75px;
+  height: 35px;
+  position: relative;
+  top: -15px;
+}
+
+.base-button() {
+  width: 88px;
+  height: 128px;
+  text-align: center;
+  margin-bottom: 5px;
+  margin-right: -4px;
+  float: left;
+  color: black;
+}
+
+.dmx-button {
+  .base-button();
+  line-height: 64px;
+  background: url(../img/button.png);
+}
+
+.scene-button {
+  .base-button();
+  line-height: 178px;
+  color: black;
+  font-weight: bold;
+  background: url(../img/button-off.png);
+  &.active {
+    background: url(../img/button-on.png);
+  }
+}
+
+.panel-divider {
+  &:before {
+    clear: both;
+  }
+  .clearfix();
+  font-weight: bold;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-left: 5px;
+}

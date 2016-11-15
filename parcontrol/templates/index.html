@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="dmxApp">
+<head>
+    <meta charset="UTF-8">
+    <title>ParControl</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/style.css') }}">
+    <script src="{{ url_for('static', filename='components/angular/angular.js') }}"></script>
+    <script src="{{ url_for('static', filename='components/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='components/chroma-js/chroma.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/controllers.js') }}"></script>
+</head>
+<body ng-controller="main">
+{% raw %}
+<div id="pars-live" class="pars-bar">
+    <div class="pars-label pars-label-live">Live</div>
+    <div ng-class="{'par-led': true, 'par-active': par.selected}" ng-repeat="par in pars"
+         style="background: url(/static/img/overlay/{{ par.type }}.png), rgb({{ par.R }},{{ par.G }},{{ par.B }});"
+         ng-click="editPar($index, true);">
+    </div>
+</div>
+<div id="pars-preview" class="pars-bar">
+    <div class="pars-label pars-label-preview">Preview</div>
+    <div ng-class="{'par-led': true, 'par-active': par.selected}" ng-repeat="par in parsPreview"
+         style="background: url(/static/img/overlay/{{ par.type }}.png), rgb({{ par.R }},{{ par.G }},{{ par.B }});"
+         ng-click="editPar($index, false);">
+    </div>
+</div>
+<div class="spacer"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-2 col-md-3">
+            <div class="panel panel-dmx">
+                <div class="panel-heading">Acties</div>
+                <div class="panel-body">
+
+                    <div class="panel-divider">Overgang</div>
+                    <div class="dmx-button">Traag</div>
+                    <div class="dmx-button">Snel</div>
+                    <div class="dmx-button">Knippen</div>
+
+                    <div class="panel-divider">Live</div>
+                    <div class="dmx-button">Blackout</div>
+                    <div class="dmx-button">Whiteout</div>
+                    <div class="dmx-button">Fadeout</div>
+
+                    <div class="panel-divider">Preview</div>
+                    <div class="dmx-button" ng-click="resetPreview();">Reset</div>
+                    <div class="dmx-button" ng-click="setPreview(0,0,0);">Zwart</div>
+                    <div class="dmx-button" ng-click="setPreview(255,255,255);">Wit</div>
+
+                    <div class="panel-divider">Scene opslaan vanaf</div>
+                    <div class="dmx-button" ng-click="programScene(true);">Live</div>
+                    <div class="dmx-button" ng-click="programScene(false);">Preview</div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2 col-md-3">
+            <div class="panel panel-dmx">
+                <div class="panel-heading">Scene</div>
+                <div class="panel-body">
+                    <div ng-class="{'scene-button': true, 'active':scene.active}" ng-repeat="scene in scenes"
+                         ng-click="scenePressed($index);">
+                        {{ $index+1 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 col-md-6">
+            <div class="panel panel-dmx">
+                <div class="panel-heading">Kleur</div>
+                <div class="panel-body panel-sliders">
+                    <div class="slider-scale"></div>
+                    <input type="range" min="0" max="1" value="50" class="vertical" orient="vertical"
+                           ng-model="colorsliders.r" step="0.01" ng-change="sliderRGB();">
+                    <span title="Red">Red</span>
+                    <div class="slider-scale"></div>
+                    <input type="range" min="0" max="1" value="50" class="vertical" orient="vertical"
+                           ng-model="colorsliders.g" step="0.01" ng-change="sliderRGB();">
+                    <span title="Green">Green</span>
+                    <div class="slider-scale"></div>
+                    <input type="range" min="0" max="1" value="50" class="vertical" orient="vertical"
+                           ng-model="colorsliders.b" step="0.01" ng-change="sliderRGB();">
+                    <span title="Blue">Blue</span>
+                    <div class="slider-scale"></div>
+                    <input type="range" min="0" max="360" value="50" class="vertical" orient="vertical"
+                           ng-model="colorsliders.h" step="1" ng-change="sliderHSL();">
+                    <span title="Hue">Hue</span>
+                    <div class="slider-scale"></div>
+                    <input type="range" min="0" max="1" value="50" class="vertical" orient="vertical"
+                           ng-model="colorsliders.s" step="0.01" ng-change="sliderHSL();">
+                    <span title="Saturation">Saturation</span>
+                    <div class="slider-scale"></div>
+                    <input type="range" min="0" max="1" value="50" class="vertical" orient="vertical"
+                           ng-model="colorsliders.l" step="0.01" ng-change="sliderHSL();">
+                    <span title="Lightness">Lightness</span>
+                    <div class="slider-scale"></div>
+                    <input type="range" min="200" max="20000" value="50" class="vertical" orient="vertical"
+                           ng-model="colorsliders.temp" ng-change="sliderTemp();">
+                    <span title="Temperature">Kelvin</span>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-5 col-md-6">
+            <div class="panel panel-dmx">
+                <div class="panel-heading">Groepen</div>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <td>Naam</td>
+                        <td>Pars</td>
+                        <td>Selecteer</td>
+                        <td>Opslaan</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="group in groups">
+                        <td>{{ group.label }}</td>
+                        <td>{{ group.pars.length }}</td>
+                        <td>
+                            <img src="/static/img/button-mini-green.png">
+                            <img src="/static/img/button-mini-red.png">
+                        </td>
+                        <td>
+                            <img src="/static/img/button-mini-gray.png">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="panel-body">Pizza</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endraw %}
+</body>
+</html>

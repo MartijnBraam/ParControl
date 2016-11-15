@@ -1,0 +1,24 @@
+{
+  "name": "parcontrol",
+  "authors": [
+    "Martijn Braam <martijn@brixit.nl>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.8",
+    "bootstrap": "~3.3.6",
+    "chroma-js": "~1.1.1"
+  }
+}
